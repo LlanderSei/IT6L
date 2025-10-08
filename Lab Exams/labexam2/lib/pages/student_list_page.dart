@@ -120,106 +120,90 @@ class _StudentListPageState extends State<StudentListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification notification) {
-              if (notification is ScrollUpdateNotification) {
-                if (notification.scrollDelta! > 0 && _isFabVisible) {
-                  setState(() {
-                    _isFabVisible = false;
-                  });
-                } else if (notification.scrollDelta! < 0 && !_isFabVisible) {
-                  setState(() {
-                    _isFabVisible = true;
-                  });
-                }
-              }
-              return true;
-            },
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _students.length,
-              itemBuilder: (context, index) {
-                Student student = _students[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                student.name,
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              Text(
-                                student.email,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ],
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          if (notification is ScrollUpdateNotification) {
+            if (notification.scrollDelta! > 0 && _isFabVisible) {
+              setState(() {
+                _isFabVisible = false;
+              });
+            } else if (notification.scrollDelta! < 0 && !_isFabVisible) {
+              setState(() {
+                _isFabVisible = true;
+              });
+            }
+          }
+          return true;
+        },
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: _students.length,
+          itemBuilder: (context, index) {
+            Student student = _students[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            student.name,
+                            style: Theme.of(context).textTheme.bodyLarge,
                           ),
+                          Text(
+                            student.email,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () =>
+                              _showAddEditDialog(student: student),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () =>
-                                  _showAddEditDialog(student: student),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Delete Student'),
-                                  content: const Text('Are you sure?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _deleteStudent(student.id!);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Delete Student'),
+                              content: const Text('Are you sure?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(),
+                                  child: const Text('Cancel'),
                                 ),
-                              ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _deleteStudent(student.id!);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: () {
-                if (!_isFabVisible) {
-                  setState(() {
-                    _isFabVisible = true;
-                  });
-                }
-              },
-              behavior: HitTestBehavior.translucent,
-            ),
-          ),
-        ],
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButton: _isFabVisible
           ? FloatingActionButton(

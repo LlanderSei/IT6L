@@ -94,97 +94,76 @@ class _CourseListPageState extends State<CourseListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification notification) {
-              if (notification is ScrollUpdateNotification) {
-                if (notification.scrollDelta! > 0 && _isFabVisible) {
-                  setState(() {
-                    _isFabVisible = false;
-                  });
-                } else if (notification.scrollDelta! < 0 && !_isFabVisible) {
-                  setState(() {
-                    _isFabVisible = true;
-                  });
-                }
-              }
-              return true;
-            },
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: _courses.length,
-              itemBuilder: (context, index) {
-                Course course = _courses[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          if (notification is ScrollUpdateNotification) {
+            if (notification.scrollDelta! > 0 && _isFabVisible) {
+              setState(() {
+                _isFabVisible = false;
+              });
+            } else if (notification.scrollDelta! < 0 && !_isFabVisible) {
+              setState(() {
+                _isFabVisible = true;
+              });
+            }
+          }
+          return true;
+        },
+        child: ListView.builder(
+          controller: _scrollController,
+          itemCount: _courses.length,
+          itemBuilder: (context, index) {
+            Course course = _courses[index];
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        course.title,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Expanded(
-                          child: Text(
-                            course.title,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _showAddEditDialog(course: course),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () =>
-                                  _showAddEditDialog(course: course),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete),
-                              onPressed: () => showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Delete Course'),
-                                  content: const Text('Are you sure?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        _deleteCourse(course.id!);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Delete'),
-                                    ),
-                                  ],
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Delete Course'),
+                              content: const Text('Are you sure?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text('Cancel'),
                                 ),
-                              ),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _deleteCourse(course.id!);
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Positioned.fill(
-            child: GestureDetector(
-              onTap: () {
-                if (!_isFabVisible) {
-                  setState(() {
-                    _isFabVisible = true;
-                  });
-                }
-              },
-              behavior: HitTestBehavior.translucent,
-            ),
-          ),
-        ],
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
       ),
       floatingActionButton: _isFabVisible
           ? FloatingActionButton(
